@@ -11,43 +11,54 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration // Spring의 설정 클래스
-@EnableWebSecurity // Spring Security의 웹 보안 기능을 활성화한다.
+@EnableWebSecurity // Spring Security 활성화
 public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
 
-        // 비밀번호를 BCrypt 방식으로 암호화하는 객체를 Spring Bean으로 등록한다.
+        // 비밀번호를 BCrypt 방식으로 암호화한다.
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http)
+            throws Exception {
 
-        // SecurityFilterChain은 HTTP 요청에 대한 보안 규칙을 설정한다.
         http
                 // REST API 테스트를 위해 CSRF를 비활성화한다.
                 .csrf(csrf -> csrf.disable())
 
-                // URL별 접근 권한을 설정한다.
+                // 요청별 접근 권한을 설정한다.
                 .authorizeHttpRequests(auth -> auth
 
-                        // PUT 방식의 회원 수정은 Leader 권한을 가진 사용자만 허용한다.
+                        // 회원가입은 인증 없이 허용한다.
+                        .requestMatchers(HttpMethod.POST, "/members")
+                        .permitAll()
+
+                        // 회원 조회는 인증 없이 허용한다.
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/members",
+                                "/members/**"
+                        )
+                        .permitAll()
+
+                        // 회원 수정은 Leader만 허용한다.
                         .requestMatchers(HttpMethod.PUT, "/members/**")
                         .hasRole("Leader")
 
-                        // 그 외 회원 API는 현재 테스트 단계에서 허용한다.
-                        .requestMatchers("/members", "/members/**")
-                        .permitAll()
+                        // 회원 삭제도 Leader만 가능하다.
+                        .requestMatchers(HttpMethod.DELETE, "/members/**")
+                        .hasRole("Leader")
 
-                        // 나머지 API는 인증된 사용자만 접근할 수 있다.
+                        // 그 외 요청은 인증이 필요하다.
                         .anyRequest().authenticated()
                 )
 
-                // Postman에서 loginId / password를 Basic Auth로 전달할 수 있도록 한다.
+                // Basic Auth를 사용하여 아이디와 비밀번호를 인증한다.
                 .httpBasic(Customizer.withDefaults());
 
-        // 설정한 보안 규칙을 Spring Security에 등록한다.
         return http.build();
     }
 }

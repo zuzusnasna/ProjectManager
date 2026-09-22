@@ -1,6 +1,5 @@
 package com.example.ProjectManager.service;
 
-import com.example.ProjectManager.dto.MemberResponseDTO;
 import com.example.ProjectManager.entity.Member;
 import com.example.ProjectManager.repository.MemberRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,7 +25,7 @@ public class MemberService {
     }
 
     // 회원 정보를 DB에 저장하는 메서드
-    public MemberResponseDTO saveMember(Member member) {
+    public Member saveMember(Member member) {
 
         // 회원가입 시 입력받은 평문 비밀번호를 BCrypt 방식으로 암호화한다.
         member.setPassword(
@@ -34,34 +33,25 @@ public class MemberService {
         );
 
         // 암호화된 회원 정보를 Repository에 전달해 DB에 저장한다.
-        Member savedMember = memberRepository.save(member);
-
-        // Entity를 응답용 DTO로 변환해서 반환한다.
-        return toResponseDTO(savedMember);
+        return memberRepository.save(member);
     }
 
     // DB에 저장된 모든 회원을 조회한다.
-    public List<MemberResponseDTO> getMembers() {
+    public List<Member> getMembers() {
 
         // Repository의 findAll()을 사용하여 모든 회원을 조회한다.
-        return memberRepository.findAll()
-                .stream()
-                // 각 Member Entity를 응답용 DTO로 변환한다.
-                .map(this::toResponseDTO)
-                .toList();
+        return memberRepository.findAll();
     }
 
     // ID를 이용하여 특정 회원 한 명을 조회한다.
-    public Optional<MemberResponseDTO> getMember(Long id) {
+    public Optional<Member> getMember(Long id) {
 
         // 전달받은 ID와 일치하는 회원을 Repository에서 조회한다.
-        return memberRepository.findById(id)
-                // 조회된 Entity를 응답용 DTO로 변환한다.
-                .map(this::toResponseDTO);
+        return memberRepository.findById(id);
     }
 
     // 특정 회원의 정보를 수정한다.
-    public MemberResponseDTO updateMember(Long id, Member updateMember) {
+    public Member updateMember(Long id, Member updateMember) {
 
         // 수정할 회원이 실제로 존재하는지 조회한다.
         Member member = memberRepository.findById(id)
@@ -83,33 +73,19 @@ public class MemberService {
         member.setRole(updateMember.getRole());
 
         // 수정된 회원 정보를 DB에 저장한다.
-        Member updatedMember = memberRepository.save(member);
-
-        // Entity를 응답용 DTO로 변환해서 반환한다.
-        return toResponseDTO(updatedMember);
+        return memberRepository.save(member);
     }
 
-    // 특정 회원을 삭제한다.
-    public void deleteMember(Long id) {
+    //특정 회원 삭제
+    public void deleteMember(Long id){
 
-        // 먼저 삭제할 회원이 존재하는지 확인한다.
-        Member member = memberRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("회원을 찾을 수 없습니다."));
+        //먼저 삭제할 회원이 있는지 확인한다.
+        Member member = memberRepository.findById(id).orElseThrow(()->new RuntimeException("회원을 찾을 수 없습니다."));
 
-        // 존재하는 회원을 삭제한다.
+        //존재하는 회원 ID 기준으로 회원을 삭제한다.
         memberRepository.delete(member);
+
     }
 
-    // Member Entity를 응답용 DTO로 변환한다.
-    private MemberResponseDTO toResponseDTO(Member member) {
-
-        // 비밀번호는 제외하고 필요한 정보만 DTO에 담는다.
-        return new MemberResponseDTO(
-                member.getId(),
-                member.getLoginId(),
-                member.getName(),
-                member.getRole()
-        );
-    }
+    // 컨트롤러 -> Service -> Repository -> JPA -> Hibernate -> JDBC -> Oracle
 }
