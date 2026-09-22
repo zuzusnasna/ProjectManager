@@ -51,7 +51,7 @@
 |---|---|
 | **2026-09-19** | [회원 Entity / Repository / Service / Controller 구현 및 Oracle 연동](./docs/processing/2026-09-19.md) |
 | **2026-09-20** | 진행 내용 작성 예정 |
-| **2026-09-21** | 진행 내용 작성 예정 |
+| **2026-09-21** | 진행 내용 작성 예정 |\n| **2026-09-22** | [회원 정보 수정/삭제, Leader 권한 적용, Request/Response DTO 분리](./docs/processing/2026-09-22.md) |
 | **...** | 새로운 개발 내용 추가 |
 
 ---
@@ -64,7 +64,7 @@
 |---|---|
 | **2026-09-19** | [8080 포트 충돌, Oracle MEMBER 객체 중복, loginId 필드명 오류, ORA-01400, Spring Security 401/403](./docs/troubleshooting/2026-09-19.md) |
 | **2026-09-20** | 트러블슈팅 내용 작성 예정 |
-| **2026-09-21** | 트러블슈팅 내용 작성 예정 |
+| **2026-09-21** | 트러블슈팅 내용 작성 예정 |\n| **2026-09-22** | [Entity/DTO 타입 불일치, HTTP 405, Request/Response DTO 분리](./docs/troubleshooting/2026-09-22.md) |
 | **...** | 새로운 트러블슈팅 추가 |
 
 ---
