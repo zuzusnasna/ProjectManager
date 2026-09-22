@@ -5,6 +5,7 @@ import com.example.ProjectManager.service.MemberService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController //HTTP요청을 처리하는 컨트롤러
 @RequestMapping("/members") //기본 URL을 /members 로 지정
@@ -24,11 +25,32 @@ public class MemberController {
         return memberService.saveMember(member);
     }
 
-    //회원 조회
+    //회원 전체 조회
     @GetMapping
     public List<Member> getMembers(){
 
         //Service에 회원 전체 조회를 요청한다.
         return memberService.getMember();
     }
+
+    //회원 한 명 조회
+    //GET /members/{id} 요청이 들어오면 실행된다.
+    @GetMapping("/{id}")
+    public Optional<Member> getMember(@PathVariable Long id){
+
+        //URL에서 받은 id를 Service에 전달하여 해당 회원을 조회한다.
+        return memberService.getMember(id);
+    }
+
+    //회원 수정
+    //Put /members/{id} 요청이 들어오면 실행된다.
+    @PutMapping("/{id}")
+    public Member updateMember(
+            @PathVariable Long id,
+            @RequestBody Member member){
+
+        //URL의 id와 수정할 회원 정보를 Service에 전달한다.
+        return memberService.updateMember(id, member);
+    }
+
 }

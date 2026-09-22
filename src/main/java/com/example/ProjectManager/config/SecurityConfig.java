@@ -3,14 +3,24 @@ package com.example.ProjectManager.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 
 @Configuration // spring의 설정 클래스
 @EnableWebSecurity //웹 보안기능 활성화
 public class SecurityConfig {
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+
+        // 비밀번호를 BCrypt 방식으로 암호화하는 객체를 Spring Bean으로 등록한다.
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean //이 메서드에서 만들어지는 객체를 Spring이 관리하게 해줌
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws  Exception{
@@ -23,8 +33,13 @@ public class SecurityConfig {
                 // URL별 접근 권한 설정
                 .authorizeHttpRequests(auth -> auth
 
-                        // 회원가입은 로그인하지 않아도 접근 가능
-                        .requestMatchers("/members").permitAll()
+                        // 회원 수정은 Leader만 가능
+                        .requestMatchers(HttpMethod.PUT, "/members/**")
+                        .hasRole("Leader")
+
+                        // 나머지 회원 API는 일단 허용
+                        .requestMatchers("/members", "/members/**")
+                        .permitAll()
 
                         // 나머지 요청은 로그인 필요
                         .anyRequest().authenticated()
