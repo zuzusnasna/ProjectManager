@@ -1,13 +1,11 @@
 package com.example.ProjectManager.dto;
 
 import com.example.ProjectManager.entity.Role;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter // Getter 메서드를 자동으로 생성한다.
-@Setter // JSON 요청 데이터를 객체에 저장할 수 있도록 Setter를 자동으로 생성한다.
-@NoArgsConstructor // JSON 데이터를 객체로 변환할 때 사용할 기본 생성자를 자동으로 생성한다.
+@Getter
+@AllArgsConstructor
 public class MemberRequestDTO {
 
     // 로그인에 사용할 아이디
