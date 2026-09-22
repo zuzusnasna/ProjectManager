@@ -2,9 +2,10 @@ package com.example.ProjectManager.dto;
 
 import com.example.ProjectManager.entity.Role;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 
-@Getter // Getter 메서드를 자동으로 생성한다.
+@Data
 @AllArgsConstructor // 모든 필드를 받는 생성자를 자동으로 생성한다.
 public class MemberResponseDTO {
 
