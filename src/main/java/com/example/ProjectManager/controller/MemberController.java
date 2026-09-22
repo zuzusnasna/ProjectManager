@@ -1,7 +1,7 @@
 package com.example.ProjectManager.controller;
 
+import com.example.ProjectManager.dto.MemberRequestDTO;
 import com.example.ProjectManager.dto.MemberResponseDTO;
-import com.example.ProjectManager.entity.Member;
 import com.example.ProjectManager.service.MemberService;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,10 +23,10 @@ public class MemberController {
     // 회원 등록
     // POST /members 요청이 들어오면 실행된다.
     @PostMapping
-    public MemberResponseDTO saveMember(@RequestBody Member member) {
+    public MemberResponseDTO saveMember(@RequestBody MemberRequestDTO requestDTO) {
 
         // JSON으로 전달받은 회원 정보를 Service에 전달한다.
-        return memberService.saveMember(member);
+        return memberService.saveMember(requestDTO);
     }
 
     // 회원 전체 조회
@@ -52,10 +52,10 @@ public class MemberController {
     @PutMapping("/{id}")
     public MemberResponseDTO updateMember(
             @PathVariable Long id,
-            @RequestBody Member member) {
+            @RequestBody MemberRequestDTO requestDTO) {
 
         // URL의 id와 수정할 회원 정보를 Service에 전달한다.
-        return memberService.updateMember(id, member);
+        return memberService.updateMember(id, requestDTO);
     }
 
     // 회원 삭제
