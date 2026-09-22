@@ -12,35 +12,41 @@ import java.util.Optional;
 
 @Service // 비즈니스 로직을 담당하는 Service 객체임을 어노테이션으로 선언
 public class MemberService {
+
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    //MemberService가 생성될 때 MemberRepository를 전달 받는다
-    //생성자 주입을 통해 Service에서 Repository를 사용할 수 있게 된다.
+    // MemberService가 생성될 때 필요한 객체를 전달받는다.
+    // 생성자 주입을 통해 Service에서 Repository와 PasswordEncoder를 사용할 수 있게 된다.
     public MemberService(MemberRepository memberRepository,
-                         PasswordEncoder passwordEncoder){
+                         PasswordEncoder passwordEncoder) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    //회원 정보를 DB에 저장하는 메서드
-    public Member saveMember(Member member){
+    // 회원 정보를 DB에 저장하는 메서드
+    public Member saveMember(Member member) {
 
-        //member 객체를 MemberRepository에 전달해 DB 저장을 요청한다.
+        // 회원가입 시 입력받은 평문 비밀번호를 BCrypt 방식으로 암호화한다.
+        member.setPassword(
+                passwordEncoder.encode(member.getPassword())
+        );
+
+        // 암호화된 회원 정보를 Repository에 전달해 DB에 저장한다.
         return memberRepository.save(member);
     }
 
-    //DB에 저장된 모든 회원을 조회한다.
-    public List<Member> getMember(){
+    // DB에 저장된 모든 회원을 조회한다.
+    public List<Member> getMembers() {
 
-        //Repository의 findAll()을 사용하여 모든회원을 조회한다.
+        // Repository의 findAll()을 사용하여 모든 회원을 조회한다.
         return memberRepository.findAll();
     }
 
-    //ID를 이용하여 특정 회원 한 명을 조회한다.
-    public Optional<Member> getMember(Long id){
+    // ID를 이용하여 특정 회원 한 명을 조회한다.
+    public Optional<Member> getMember(Long id) {
 
-        //전달 받은 ID 와 일치하는 회원을 Repository에서 조회한다.
+        // 전달받은 ID와 일치하는 회원을 Repository에서 조회한다.
         return memberRepository.findById(id);
     }
 
@@ -55,7 +61,7 @@ public class MemberService {
         // 로그인 ID를 수정한다.
         member.setLoginId(updateMember.getLoginId());
 
-        // 새로운 비밀번호를 Bcrypt로 암호화한 후 수정한다.
+        // 새로운 비밀번호를 BCrypt로 암호화한 후 수정한다.
         member.setPassword(
                 passwordEncoder.encode(updateMember.getPassword())
         );
@@ -69,5 +75,6 @@ public class MemberService {
         // 수정된 회원 정보를 DB에 저장한다.
         return memberRepository.save(member);
     }
-    //컨트롤러 -> saveMember(member) -> JPA -> Hibernate -> JDBC -> Oracle
+
+    // 컨트롤러 -> Service -> Repository -> JPA -> Hibernate -> JDBC -> Oracle
 }
